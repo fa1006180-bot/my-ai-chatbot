@@ -15,21 +15,22 @@ from services.storage import (
 )
 
 load_dotenv()
-def get_secret(key: str, default: str = "" ) -> str:
+
+
+def get_secret(key: str, default: str = "") -> str:
     val = os.getenv(key, "").strip()
     if val:
         return val
     try:
         if key in st.secrets:
-            return 
-    str(st.secrets[key]).strip()
+            return str(st.secrets[key]).strip()
     except Exception:
         pass
     return default
 
 
 st.set_page_config(
-    page_title="Smart AI Studio",
+    page_title="Fardin AI Technology",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -76,7 +77,7 @@ init_state()
 
 # ---------------------- Sidebar (Chat History & Settings) ----------------------
 with st.sidebar:
-    st.title("🤖 Smart AI Studio")
+    st.title("🤖 Fardin AI Studio")
     st.caption("Chat • Image Analysis • AI Image Generation")
 
     if st.button("➕ New Chat", type="primary", use_container_width=True):
@@ -123,8 +124,11 @@ with st.sidebar:
             "Gemini API Key (Chat & Vision)",
             value=env_key,
             type="password",
-            help="Enter your API key here or set GEMINI_API_KEY in the .env file.",
+            help="Set GEMINI_API_KEY in Streamlit Secrets or .env file.",
         )
+        if env_key:
+            st.caption("✅ Server API Key loaded automatically.")
+
         chat_model = st.selectbox(
             "Chat & Vision Model",
             ["gemini-3.8-flash", "gemini-3.5-flash-lite", "gemini-4-hydrogen"],
@@ -150,14 +154,14 @@ with st.sidebar:
         if image_provider == "Pollinations.ai (Free)":
             pollinations_key = st.text_input(
                 "Pollinations Key (Optional)",
-                value=get_secret("POLLINATIONS_API_KEY", ""),
+                value=get_secret("POLLINATIONS_API_KEY"),
                 type="password",
                 help="Leave blank to try anonymous mode, or get a free key at enter.pollinations.ai.",
             )
         elif image_provider == "Hugging Face (Free FLUX.1)":
             hf_token = st.text_input(
                 "Hugging Face Token (Free)",
-                value=os.get_secret("HF_TOKEN", ""),
+                value=get_secret("HF_TOKEN"),
                 type="password",
                 help="Create a free Read token at huggingface.co/settings/tokens (no card required).",
             )
@@ -186,7 +190,7 @@ mode = st.radio(
 
 if not current_session["messages"]:
     st.info(
-        "Welcome to Fardin AI Techology!📎 Upload an Image'** to get a detailed description of a photo. "
+        "Welcome to **Fardin AI Technology**! Type any question below, or open **'📎 Upload an Image'** to get a detailed description of a photo. "
         "To create AI art, select **'🎨 Generate Image'** above (or start your message with `/image`)."
     )
 
@@ -238,9 +242,9 @@ if user_prompt or (uploaded_file is not None and analyze_now):
         prompt_text = prompt_text[7:].strip()
 
     if (not is_image_gen or image_provider == "Gemini (Paid Billing)") and (
-        not api_key or api_key == "আপনার_GEMINI_API_KEY_এখানে_দিন"
+        not api_key or "আপনার" in api_key
     ):
-        st.error("❌ Please enter a valid `GEMINI_API_KEY` in your `.env` file or in the sidebar settings.")
+        st.error("❌ Please enter a valid `GEMINI_API_KEY` in Streamlit Secrets or in the sidebar settings.")
         st.stop()
 
     saved_upload_path = None
@@ -331,6 +335,3 @@ if user_prompt or (uploaded_file is not None and analyze_now):
 
         except Exception as e:
             st.error(f"⚠️ An error occurred: {e}")
-
-
-
