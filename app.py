@@ -15,6 +15,17 @@ from services.storage import (
 )
 
 load_dotenv()
+def get_secret(key: str) -> str:
+    val = os.getenv(key, "").strip()
+    if val:
+        return val
+    try:
+        if key in st.secrets:
+            return str(st.secrets[key]).strip()
+    except Exception:
+        pass
+    return ""
+
 
 st.set_page_config(
     page_title="Smart AI Studio",
@@ -106,7 +117,7 @@ with st.sidebar:
 
     st.divider()
     with st.expander("⚙️ Model & API Settings", expanded=True):
-        env_key = os.getenv("GEMINI_API_KEY", "")
+        env_key = get_secret("GEMINI_API_KEY")
         api_key_input = st.text_input(
             "Gemini API Key (Chat & Vision)",
             value=env_key,
@@ -319,3 +330,6 @@ if user_prompt or (uploaded_file is not None and analyze_now):
 
         except Exception as e:
             st.error(f"⚠️ An error occurred: {e}")
+
+
+
