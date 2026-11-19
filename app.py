@@ -15,16 +15,17 @@ from services.storage import (
 )
 
 load_dotenv()
-def get_secret(key: str) -> str:
+def get_secret(key: str, default: str = "" ) -> str:
     val = os.getenv(key, "").strip()
     if val:
         return val
     try:
         if key in st.secrets:
-            return str(st.secrets[key]).strip()
+            return 
+    str(st.secrets[key]).strip()
     except Exception:
         pass
-    return ""
+    return default
 
 
 st.set_page_config(
