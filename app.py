@@ -149,14 +149,14 @@ with st.sidebar:
         if image_provider == "Pollinations.ai (Free)":
             pollinations_key = st.text_input(
                 "Pollinations Key (Optional)",
-                value=os.getenv("POLLINATIONS_API_KEY", ""),
+                value=get_secret("POLLINATIONS_API_KEY", ""),
                 type="password",
                 help="Leave blank to try anonymous mode, or get a free key at enter.pollinations.ai.",
             )
         elif image_provider == "Hugging Face (Free FLUX.1)":
             hf_token = st.text_input(
                 "Hugging Face Token (Free)",
-                value=os.getenv("HF_TOKEN", ""),
+                value=os.get_secret("HF_TOKEN", ""),
                 type="password",
                 help="Create a free Read token at huggingface.co/settings/tokens (no card required).",
             )
